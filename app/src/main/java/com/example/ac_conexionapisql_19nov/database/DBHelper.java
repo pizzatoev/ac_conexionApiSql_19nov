@@ -41,9 +41,6 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // ============ MÉTODOS PARA ROLES ============
-
-    // Limpiar y sincronizar roles desde la API
     public void sincronizarRoles(ArrayList<Rol> roles) {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -63,7 +60,6 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Insertar un rol
     public boolean insertarRol(Rol rol) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -73,7 +69,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return resultado != -1;
     }
 
-    // Actualizar un rol
     public boolean actualizarRol(Rol rol) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -83,7 +78,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return resultado > 0;
     }
 
-    // Eliminar un rol
     public boolean eliminarRol(int idRol) {
         SQLiteDatabase db = this.getWritableDatabase();
         int resultado = db.delete("roles", "idRol = ?", 
@@ -108,9 +102,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return lista;
     }
 
-    // ============ MÉTODOS PARA USUARIOS ============
 
-    // Limpiar y sincronizar usuarios desde la API
     public void sincronizarUsuarios(ArrayList<Usuario> usuarios) {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -133,7 +125,6 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Insertar un usuario
     public boolean insertarUsuario(Usuario usuario) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -146,7 +137,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return resultado != -1;
     }
 
-    // Actualizar un usuario
     public boolean actualizarUsuario(Usuario usuario) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -159,7 +149,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return resultado > 0;
     }
 
-    // Eliminar un usuario
+
     public boolean eliminarUsuario(int idUsuario) {
         SQLiteDatabase db = this.getWritableDatabase();
         int resultado = db.delete("usuarios", "idUsuario = ?", 
@@ -167,7 +157,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return resultado > 0;
     }
 
-    // Obtener todos los usuarios
     public ArrayList<Usuario> obtenerUsuarios() {
         ArrayList<Usuario> lista = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();

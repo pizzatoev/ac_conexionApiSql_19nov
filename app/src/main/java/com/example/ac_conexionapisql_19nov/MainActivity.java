@@ -84,9 +84,6 @@ public class MainActivity extends AppCompatActivity {
         btnSincronizar.setOnClickListener(v -> sincronizarConAPI());
     }
 
-    /**
-     * Verifica la conectividad y carga los datos correspondientes
-     */
     private void verificarConexionYCargar() {
         isOnline = NetworkUtils.isNetworkAvailable(this);
         
@@ -105,9 +102,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Carga usuarios desde la API
-     */
     private void cargarUsuariosDesdeAPI() {
         new Thread(() -> {
             try {
@@ -164,9 +158,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    /**
-     * Carga roles desde la API
-     */
     private void cargarRolesDesdeAPI() {
         new Thread(() -> {
             try {
@@ -206,9 +197,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    /**
-     * Carga usuarios desde SQLite
-     */
     private void cargarUsuariosDesdeSQLite() {
         listaUsuarios.clear();
         listaUsuarios.addAll(dbHelper.obtenerUsuarios());
@@ -220,18 +208,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Carga roles desde SQLite
-     */
     private void cargarRolesDesdeSQLite() {
         listaRoles.clear();
         listaRoles.addAll(dbHelper.obtenerRoles());
         actualizarListaRoles();
     }
 
-    /**
-     * Sincroniza los datos con la API
-     */
     private void sincronizarConAPI() {
         if (!NetworkUtils.isNetworkAvailable(this)) {
             Toast.makeText(this, "No hay conexión a internet", Toast.LENGTH_SHORT).show();
@@ -250,25 +232,16 @@ public class MainActivity extends AppCompatActivity {
         cargarRolesDesdeAPI();
     }
 
-    /**
-     * Actualiza la lista de usuarios en la UI
-     */
     private void actualizarLista() {
         adapter = new UsuarioAdapter(this, listaUsuarios);
         lvUsuarios.setAdapter(adapter);
     }
 
-    /**
-     * Actualiza la lista de roles en la UI
-     */
     private void actualizarListaRoles() {
         adapterRoles = new RolAdapter(this, listaRoles);
         lvRoles.setAdapter(adapterRoles);
     }
 
-    /**
-     * Muestra el diálogo para agregar o editar un usuario
-     */
     private void mostrarDialogAgregarUsuario(Usuario usuarioEditar) {
         // Cargar roles primero (desde SQLite o actualizar)
         cargarRolesDesdeSQLite();
@@ -307,13 +280,11 @@ public class MainActivity extends AppCompatActivity {
             usuarioEditando = null;
         }
 
-        // Configurar Spinner de roles
         ArrayAdapter<Rol> adapterRolesSpinner = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, listaRoles);
         adapterRolesSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRol.setAdapter(adapterRolesSpinner);
 
-        // Seleccionar el rol del usuario si está editando
         if (usuarioEditar != null) {
             for (int i = 0; i < listaRoles.size(); i++) {
                 if (listaRoles.get(i).getIdRol() == usuarioEditar.getIdRol()) {
@@ -329,15 +300,13 @@ public class MainActivity extends AppCompatActivity {
             String nombre = edtNombre.getText().toString().trim();
             String email = edtEmail.getText().toString().trim();
             String password = edtPassword.getText().toString().trim();
-            
-            // Validar campos
+
             if (nombre.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(MainActivity.this, 
                     "Complete todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Obtener rol seleccionado
             Rol rolSeleccionado = (Rol) spinnerRol.getSelectedItem();
             if (rolSeleccionado == null) {
                 Toast.makeText(MainActivity.this, 
@@ -346,7 +315,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (usuarioEditar == null) {
-                // Crear nuevo usuario
                 Usuario nuevoUsuario = new Usuario();
                 nuevoUsuario.setNombre(nombre);
                 nuevoUsuario.setEmail(email);
@@ -383,23 +351,14 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    /**
-     * Muestra el diálogo para agregar un nuevo usuario (sin parámetros)
-     */
     private void mostrarDialogAgregarUsuario() {
         mostrarDialogAgregarUsuario(null);
     }
 
-    /**
-     * Edita un usuario existente
-     */
     public void editarUsuario(Usuario usuario) {
         mostrarDialogAgregarUsuario(usuario);
     }
 
-    /**
-     * Confirma la eliminación de un usuario
-     */
     public void confirmarEliminarUsuario(Usuario usuario) {
         new AlertDialog.Builder(this)
                 .setTitle("Confirmar eliminación")
@@ -409,9 +368,6 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    /**
-     * Guarda un usuario en la API
-     */
     private void guardarUsuarioEnAPI(Usuario usuario) {
         new Thread(() -> {
             try {
@@ -427,9 +383,7 @@ public class MainActivity extends AppCompatActivity {
                 jsonUsuario.put("email", usuario.getEmail());
                 jsonUsuario.put("password", usuario.getPassword());
                 jsonUsuario.put("idRol", usuario.getIdRol());
-                
-                // Agregar objeto Rol con solo idRol (sin nombreRol)
-                // El servidor espera el objeto Rol pero puede que solo necesite idRol
+
                 JSONObject jsonRol = new JSONObject();
                 jsonRol.put("idRol", usuario.getIdRol());
                 jsonUsuario.put("Rol", jsonRol);
@@ -494,9 +448,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    /**
-     * Guarda un usuario en SQLite
-     */
     private void guardarUsuarioEnSQLite(Usuario usuario) {
         // Generar un ID temporal negativo para usuarios offline
         // Verificar si idUsuario es null o 0
@@ -529,7 +480,6 @@ public class MainActivity extends AppCompatActivity {
                 con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
                 con.setDoOutput(true);
 
-                // Crear JSON
                 JSONObject jsonUsuario = new JSONObject();
                 jsonUsuario.put("idUsuario", usuario.getIdUsuario());
                 jsonUsuario.put("nombre", usuario.getNombre());
@@ -558,7 +508,6 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this, "Usuario actualizado en API", Toast.LENGTH_SHORT).show();
                     });
                 } else {
-                    // Leer error
                     BufferedReader reader = new BufferedReader(new InputStreamReader(con.getErrorStream()));
                     StringBuilder errorStr = new StringBuilder();
                     String linea;
@@ -570,7 +519,6 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         Toast.makeText(this, "Error al actualizar usuario: " + mensajeError, Toast.LENGTH_LONG).show();
                     });
-                    // Actualizar en SQLite fuera del hilo UI
                     actualizarUsuarioEnSQLite(usuario);
                 }
                 
@@ -585,15 +533,11 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    /**
-     * Actualiza un usuario en SQLite
-     */
     private void actualizarUsuarioEnSQLite(Usuario usuario) {
         boolean exito = dbHelper.actualizarUsuario(usuario);
         
         runOnUiThread(() -> {
             if (exito) {
-                // Buscar y actualizar en la lista
                 for (int i = 0; i < listaUsuarios.size(); i++) {
                     if (listaUsuarios.get(i).getIdUsuario() != null && 
                         listaUsuarios.get(i).getIdUsuario().equals(usuario.getIdUsuario())) {
@@ -609,9 +553,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Elimina un usuario
-     */
+
     private void eliminarUsuario(Usuario usuario) {
         if (isOnline && NetworkUtils.isNetworkAvailable(this)) {
             eliminarUsuarioEnAPI(usuario);
@@ -620,9 +562,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Elimina un usuario de la API
-     */
+
     private void eliminarUsuarioEnAPI(Usuario usuario) {
         new Thread(() -> {
             try {
@@ -663,9 +603,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    /**
-     * Elimina un usuario de SQLite
-     */
     private void eliminarUsuarioEnSQLite(Usuario usuario) {
         if (usuario.getIdUsuario() != null) {
             boolean exito = dbHelper.eliminarUsuario(usuario.getIdUsuario());
@@ -702,7 +639,6 @@ public class MainActivity extends AppCompatActivity {
         Button btnGuardar = dialogView.findViewById(R.id.btnGuardar);
         Button btnCancelar = dialogView.findViewById(R.id.btnCancelar);
 
-        // Si es edición, prellenar campo
         if (rolEditar != null) {
             edtNombreRol.setText(rolEditar.getNombreRol());
             rolEditando = rolEditar;
@@ -715,7 +651,6 @@ public class MainActivity extends AppCompatActivity {
         btnGuardar.setOnClickListener(v -> {
             String nombreRol = edtNombreRol.getText().toString().trim();
 
-            // Validar campo
             if (nombreRol.isEmpty()) {
                 Toast.makeText(MainActivity.this, 
                     "Ingrese un nombre de rol", Toast.LENGTH_SHORT).show();
@@ -723,7 +658,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (rolEditar == null) {
-                // Crear nuevo rol
                 Rol nuevoRol = new Rol();
                 nuevoRol.setNombreRol(nombreRol);
 
@@ -733,7 +667,6 @@ public class MainActivity extends AppCompatActivity {
                     guardarRolEnSQLite(nuevoRol);
                 }
             } else {
-                // Actualizar rol existente
                 rolEditar.setNombreRol(nombreRol);
 
                 if (isOnline && NetworkUtils.isNetworkAvailable(MainActivity.this)) {
@@ -754,23 +687,14 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    /**
-     * Muestra el diálogo para agregar un nuevo rol (sin parámetros)
-     */
     private void mostrarDialogAgregarRol() {
         mostrarDialogAgregarRol(null);
     }
 
-    /**
-     * Edita un rol existente
-     */
     public void editarRol(Rol rol) {
         mostrarDialogAgregarRol(rol);
     }
 
-    /**
-     * Confirma la eliminación de un rol
-     */
     public void confirmarEliminarRol(Rol rol) {
         new AlertDialog.Builder(this)
                 .setTitle("Confirmar eliminación")
@@ -780,9 +704,6 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    /**
-     * Guarda un rol en la API
-     */
     private void guardarRolEnAPI(Rol rol) {
         new Thread(() -> {
             try {
@@ -853,9 +774,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    /**
-     * Guarda un rol en SQLite
-     */
     private void guardarRolEnSQLite(Rol rol) {
         // Generar un ID temporal negativo para roles offline
         if (rol.getIdRol() == 0) {
@@ -875,9 +793,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Actualiza un rol en la API
-     */
     private void actualizarRolEnAPI(Rol rol) {
         new Thread(() -> {
             try {
@@ -901,7 +816,6 @@ public class MainActivity extends AppCompatActivity {
                 int respuesta = con.getResponseCode();
                 
                 if (respuesta == HttpURLConnection.HTTP_OK || respuesta == HttpURLConnection.HTTP_NO_CONTENT) {
-                    // Actualizar también en SQLite
                     actualizarRolEnSQLite(rol);
                     
                     runOnUiThread(() -> {
@@ -933,9 +847,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    /**
-     * Actualiza un rol en SQLite
-     */
     private void actualizarRolEnSQLite(Rol rol) {
         boolean exito = dbHelper.actualizarRol(rol);
         
@@ -956,9 +867,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Elimina un rol
-     */
     private void eliminarRol(Rol rol) {
         if (isOnline && NetworkUtils.isNetworkAvailable(this)) {
             eliminarRolEnAPI(rol);
@@ -980,14 +888,12 @@ public class MainActivity extends AppCompatActivity {
                 int respuesta = con.getResponseCode();
                 
                 if (respuesta == HttpURLConnection.HTTP_OK || respuesta == HttpURLConnection.HTTP_NO_CONTENT) {
-                    // Eliminar también de SQLite
                     eliminarRolEnSQLite(rol);
                     
                     runOnUiThread(() -> {
                         Toast.makeText(this, "Rol eliminado de la API", Toast.LENGTH_SHORT).show();
                     });
                 } else {
-                    // Leer error
                     BufferedReader reader = new BufferedReader(new InputStreamReader(con.getErrorStream()));
                     StringBuilder errorStr = new StringBuilder();
                     String linea;
@@ -1010,15 +916,11 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    /**
-     * Elimina un rol de SQLite
-     */
     private void eliminarRolEnSQLite(Rol rol) {
         boolean exito = dbHelper.eliminarRol(rol.getIdRol());
         
         runOnUiThread(() -> {
             if (exito) {
-                // Eliminar de la lista
                 listaRoles.remove(rol);
                 actualizarListaRoles();
                 Toast.makeText(this, "Rol eliminado de SQLite", Toast.LENGTH_SHORT).show();
@@ -1031,7 +933,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Verificar conexión cada vez que se resume la actividad
         verificarConexionYCargar();
         cargarRolesDesdeSQLite();
     }

@@ -22,7 +22,7 @@ public class Usuario {
 
     // Constructor sin la llave primaria
     public Usuario(String nombre, String email, String password, int idRol) {
-        this.idUsuario = null;  // null para que la API lo genere
+        this.idUsuario = null;
         this.nombre = nombre;
         this.email = email;
         this.password = password;
@@ -76,7 +76,7 @@ public class Usuario {
     public void setRol(Rol rol) {
         this.rol = rol;
         if (rol != null) {
-            this.idRol = rol.getIdRol();  // Mantener idRol sincronizado
+            this.idRol = rol.getIdRol();
         }
     }
 
