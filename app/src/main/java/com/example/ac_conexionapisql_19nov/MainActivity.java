@@ -468,9 +468,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Actualiza un usuario en la API
-     */
+
     private void actualizarUsuarioEnAPI(Usuario usuario) {
         new Thread(() -> {
             try {
@@ -620,9 +618,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Muestra el diálogo para agregar o editar un rol
-     */
     private void mostrarDialogAgregarRol(Rol rolEditar) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_agregar_rol, null);
@@ -875,9 +870,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Elimina un rol de la API
-     */
     private void eliminarRolEnAPI(Rol rol) {
         new Thread(() -> {
             try {
